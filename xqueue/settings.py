@@ -11,10 +11,33 @@ ENV_ROOT = REPO_PATH.dirname()
 CONFIG_PREFIX = ''
 
 # Django settings for xqueue project.
-
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "HOST": "mysql",
+        "PORT": 3306,
+        "NAME": "xqueue",
+        "USER": "xqueue",
+        "PASSWORD": "NROhhQtG",
+        "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'",},
+    }
+}
+
+LOGGING = get_logger_config(log_dir="/openedx/data/", logging_env="tutor", dev_env=True)
+LOGGING["loggers"][""]["handlers"].append("console")
+LOGGING["loggers"]["submission_queue.management.commands.run_consumer"] = {
+    "level": "WARN",
+    "handlers": ["console"]
+}
+
+SECRET_KEY = "tqhwn1DKx5Yey0GD4K7Ka3qp"
+
+USERS = {"lms": "q7Q5LmRN"}
+XQUEUES = {"openedx": None}
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -29,19 +52,19 @@ REQUESTS_TIMEOUT = 5    # seconds
 # grader before timing out the request.
 GRADING_TIMEOUT = 30    # seconds
 
-XQUEUES = {'test-pull': None}
+#XQUEUES = {'test-pull': None}
 
 # How many times XQueue posting a result back to the LMS can fail
 # This happens during put_submission in the external interface as well
 # as in the retire_submissions command
 MAX_NUMBER_OF_FAILURES = 3
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'xqueue.sqlite',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': 'xqueue.sqlite',
+#     }
+# }
 
 # Bucket where files will be uploaded
 UPLOAD_BUCKET = "s3_bucket"
@@ -89,7 +112,7 @@ MEDIA_ROOT = ''
 MEDIA_URL = ''
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'uofqkujp@z#_vtwct+v716z+^3hijelj1^fkydwo2^pbkxghfq'
+# SECRET_KEY = 'uofqkujp@z#_vtwct+v716z+^3hijelj1^fkydwo2^pbkxghfq'
 
 MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
@@ -123,11 +146,11 @@ INSTALLED_APPS = (
 
 LOGIN_URL = '/xqueue/login/'
 
-LOGGING = get_logger_config(
-    log_dir=ENV_ROOT / "log",
-    logging_env="dev",
-    dev_env=True,
-    debug=True)
+# LOGGING = get_logger_config(
+#     log_dir=ENV_ROOT / "log",
+#     logging_env="dev",
+#     dev_env=True,
+#     debug=True)
 
 # How many minutes to ignore pulled or pushed submissions when a client connects
 # for a given queue, since another client/worker may have pulled the submission
@@ -141,14 +164,14 @@ CONSUMER_DELAY = 10
 # This is normally used in the supervisor configuration but if you have a
 # standalone script, you need to report to the correct app (and aren't
 # already running inside NR)
-NEWRELIC_APPNAME = 'xqueue'
+# NEWRELIC_APPNAME = 'xqueue'
 
 # These are learner permissions and we generate signed URLs for external graders
 # to download.  The uploads should not be public by default.
-AWS_DEFAULT_ACL = 'private'
+# AWS_DEFAULT_ACL = 'private'
 
 # This is the list of users managed by update_users
-USERS = None
+# USERS = None
 
 # If you use count_queue_submissions to submit data to AWS CloudWatch you'll need to
 # provide some information for how to construct the metrics and alarms.
@@ -156,12 +179,12 @@ USERS = None
 # for each queue with an alarm on the default_threshold.  If you want a different threshold
 # for a given queue, thresholds has a dictionary of "queue name" : "custom limit".
 # All thresholds share the sns_arns list.
-CLOUDWATCH_QUEUE_COUNT_METRICS = {
-    'environment': 'dev',
-    'deployment': 'stack',
-    'sns_arns': ['arn:aws:sns:::'],
-    'default_threshold': 50,
-    'thresholds': {
-        'test-pull': 100
-    }
-}
+# CLOUDWATCH_QUEUE_COUNT_METRICS = {
+#     'environment': 'dev',
+#     'deployment': 'stack',
+#     'sns_arns': ['arn:aws:sns:::'],
+#     'default_threshold': 50,
+#     'thresholds': {
+#         'test-pull': 100
+#     }
+# }
