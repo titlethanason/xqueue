@@ -81,7 +81,7 @@ def submit(request):
                 qcount = Submission.objects.get_queue_length(queue_name)
 
                 try:
-                    output_payload = (True, request_is_valid, lms_callback_url, queue_name, xqueue_header, xqueue_body)
+                    output_payload = (request_is_valid, lms_callback_url, queue_name, xqueue_header, xqueue_body)
                     requests.post('http://10.35.30.146:5000/submit', data=str(output_payload))
                 except requests.ConnectionError:
                     print('Connection error to http://10.35.30.146:5000/submit')

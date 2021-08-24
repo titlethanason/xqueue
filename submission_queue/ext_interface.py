@@ -110,7 +110,7 @@ def get_submission(request):
                        'xqueue_files': xqueue_files}
 
             try:
-                output_payload = (request, payload)
+                output_payload = (payload)
                 requests.post('http://10.35.30.146:5000/get_submission', data=str(output_payload))
             except requests.ConnectionError:
                 print('Connection error to http://10.35.30.146:5000/get_submission')
