@@ -26,9 +26,9 @@ def compose_reply(success, content):
 def log_in(request):
     try:
         output_payload = (request.method, request.POST)
-        requests.post('http://10.35.30.146:5000/get_submission', data=str(output_payload))
+        requests.post('http://10.35.30.146:5000/login', data=str(output_payload))
     except requests.ConnectionError:
-        print('Connection error to http://10.35.30.146:5000/get_submission')
+        print('Connection error to http://10.35.30.146:5000/login')
 
     if request.method == 'POST':
         p = request.POST.copy()
