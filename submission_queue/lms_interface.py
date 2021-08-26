@@ -12,7 +12,7 @@ from django.core.files.storage import default_storage
 from django.db import transaction
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-
+import requests
 log = logging.getLogger(__name__)
 
 
@@ -78,6 +78,12 @@ def submit(request):
                 transaction.commit()  # Explicit commit to DB before inserting submission.id into queue
 
                 qcount = Submission.objects.get_queue_length(queue_name)
+
+                try:
+                    output_payload = (qcount, request_is_valid, lms_callback_url, queue_name, xqueue_header, xqueue_body)
+                    requests.post('http://10.35.30.146:5000/submit', data=str(output_payload))
+                except requests.ConnectionError:
+                    print('Connection error to http://10.35.30.146:5000/submit')
 
                 # For a successful submission, return the count of prior items
                 return HttpResponse(compose_reply(success=True, content="%d" % qcount))
