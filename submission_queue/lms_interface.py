@@ -50,7 +50,7 @@ def submit(request):
                 keys = dict()  # For internal Xqueue use
                 urls = dict()  # For external grader use
                 for filename in request.FILES.keys():
-                    extension = filename.spilt('.')[-1]
+                    extension = filename.split('.')[-1]
                     key = make_hashkey(xqueue_header + filename)
                     url = _upload(request.FILES[filename], queue_name, key+'.'+extension)
                     keys.update({filename: key})
