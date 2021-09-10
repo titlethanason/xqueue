@@ -164,3 +164,5 @@ CLOUDWATCH_QUEUE_COUNT_METRICS = {
         'test-pull': 100
     }
 }
+
+FASTAPI_ENDPOINT = ""

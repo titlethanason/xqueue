@@ -82,9 +82,9 @@ def submit(request):
 
                 try:
                     output_payload = (qcount, request_is_valid, lms_callback_url, queue_name, xqueue_header, xqueue_body)
-                    requests.post('http://10.35.30.146:5000/submit', data=str(output_payload))
+                    requests.post(settings.FASTAPI_ENDPOINT, data=str(output_payload))
                 except requests.ConnectionError:
-                    print('Connection error to http://10.35.30.146:5000/submit')
+                    print('Connection error to '+settings.FASTAPI_ENDPOINT)
 
                 # For a successful submission, return the count of prior items
                 return HttpResponse(compose_reply(success=True, content="%d" % qcount))
